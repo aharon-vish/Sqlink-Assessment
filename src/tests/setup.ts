@@ -1,55 +1,92 @@
 import '@testing-library/jest-dom';
 import { expect, afterEach, vi, beforeAll, afterAll } from 'vitest';
 import { cleanup } from '@testing-library/react';
+import type { ReactNode } from 'react';
 
-// Enhanced i18n mock
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, params?: any) => {
-      // Mock translation map for better testing
-      const translations: Record<string, string> = {
-        'dashboard.title': 'Job Dashboard',
-        'dashboard.createNewJob': 'Create New Job',
-        'dashboard.deleteJobs': 'Delete Jobs',
-        'dashboard.searchPlaceholder': 'Search jobs by name...',
-        'dashboard.showingResults': 'Showing {{count}} of {{total}} jobs',
-        'dashboard.clearFilters': 'Clear Filters',
-        'dashboard.noJobsFound': 'No jobs found',
-        'jobStatus.pending': 'Pending',
-        'jobStatus.inQueue': 'In Queue',
-        'jobStatus.running': 'Running',
-        'jobStatus.completed': 'Completed',
-        'jobStatus.failed': 'Failed',
-        'jobStatus.stopped': 'Stopped',
-        'connectionStatus.connected': 'Real-time Connected',
-        'createJobModal.title': 'Create New Job',
-        'common.loading': 'Loading...',
-      };
-      
-      let result = translations[key] || key;
-      
-      // Handle interpolation
-      if (params) {
-        result = result.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => 
-          params[paramKey]?.toString() || match
-        );
-      }
-      
-      return result;
+// Enhanced i18n mock with all required exports
+vi.mock('react-i18next', async () => {
+  // Import actual module to get its type structure
+  const actual = await vi.importActual('react-i18next') as any;
+  
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (key: string, params?: any) => {
+        // Mock translation map for better testing
+        const translations: Record<string, string> = {
+          'dashboard.title': 'Job Dashboard',
+          'dashboard.createNewJob': 'Create New Job',
+          'dashboard.deleteJobs': 'Delete Jobs',
+          'dashboard.searchPlaceholder': 'Search jobs by name...',
+          'dashboard.showingResults': 'Showing {{count}} of {{total}} jobs',
+          'dashboard.clearFilters': 'Clear Filters',
+          'dashboard.noJobsFound': 'No jobs found',
+          'jobStatus.pending': 'Pending',
+          'jobStatus.inQueue': 'In Queue',
+          'jobStatus.running': 'Running',
+          'jobStatus.completed': 'Completed',
+          'jobStatus.failed': 'Failed',
+          'jobStatus.stopped': 'Stopped',
+          'connectionStatus.connected': 'Real-time Connected',
+          'createJobModal.title': 'Create New Job',
+          'createJobModal.jobNameLabel': 'Job Name',
+          'createJobModal.jobNamePlaceholder': 'Enter a descriptive job name',
+          'createJobModal.priorityLabel': 'Priority',
+          'createJobModal.createButton': 'Create Job',
+          'common.loading': 'Loading...',
+          'common.cancel': 'Cancel',
+          'common.create': 'Create',
+        };
+        
+        let result = translations[key] || key;
+        
+        // Handle interpolation
+        if (params) {
+          result = result.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => 
+            params[paramKey]?.toString() || match
+          );
+        }
+        
+        return result;
+      },
+      i18n: {
+        language: 'en',
+        changeLanguage: vi.fn(),
+      },
+      ready: true,
+    }),
+    initReactI18next: {
+      type: '3rdParty',
+      init: vi.fn(),
     },
-    i18n: {
-      language: 'en',
-      changeLanguage: vi.fn(),
-    },
-    currentLanguage: 'en',
-    isRTL: false,
+    I18nextProvider: ({ children }: { children: ReactNode }) => children,
+  };
+});
+
+// Mock i18next directly
+vi.mock('i18next', () => {
+  const mockI18n = {
+    use: vi.fn().mockReturnThis(),
+    init: vi.fn().mockResolvedValue(undefined),
+    t: vi.fn((key: string) => key),
+    language: 'en',
     changeLanguage: vi.fn(),
-    formatDate: (timestamp: number) => {
-      if (!timestamp) return '-';
-      return new Date(timestamp).toLocaleString();
-    },
-    formatNumber: (num: number) => num.toString(),
-  }),
+  };
+
+  return {
+    default: mockI18n,
+    ...mockI18n,
+  };
+});
+
+// Mock i18next-browser-languagedetector
+vi.mock('i18next-browser-languagedetector', () => ({
+  default: {
+    type: 'languageDetector',
+    init: vi.fn(),
+    detect: vi.fn(() => 'en'),
+    cacheUserLanguage: vi.fn(),
+  },
 }));
 
 // Mock services with proper implementation
@@ -106,6 +143,63 @@ vi.mock('@/services', () => ({
 // Mock UUID
 vi.mock('uuid', () => ({
   v4: () => 'test-uuid-' + Math.random().toString(36).substr(2, 9),
+}));
+
+// Mock the useTranslation hook directly
+vi.mock('@/hooks/useTranslation', () => ({
+  useTranslation: () => ({
+    t: (key: string, params?: any) => {
+      const translations: Record<string, string> = {
+        'dashboard.title': 'Job Dashboard',
+        'dashboard.createNewJob': 'Create New Job',
+        'dashboard.deleteJobs': 'Delete Jobs',
+        'dashboard.searchPlaceholder': 'Search jobs by name...',
+        'dashboard.showingResults': 'Showing {{count}} of {{total}} jobs',
+        'dashboard.clearFilters': 'Clear Filters',
+        'dashboard.noJobsFound': 'No jobs found',
+        'jobStatus.pending': 'Pending',
+        'jobStatus.inQueue': 'In Queue',
+        'jobStatus.running': 'Running',
+        'jobStatus.completed': 'Completed',
+        'jobStatus.failed': 'Failed',
+        'jobStatus.stopped': 'Stopped',
+        'connectionStatus.connected': 'Real-time Connected',
+        'createJobModal.title': 'Create New Job',
+        'createJobModal.jobNameLabel': 'Job Name',
+        'createJobModal.jobNamePlaceholder': 'Enter a descriptive job name',
+        'createJobModal.priorityLabel': 'Priority',
+        'createJobModal.createButton': 'Create Job',
+        'common.loading': 'Loading...',
+        'common.cancel': 'Cancel',
+        'common.create': 'Create',
+      };
+      
+      let result = translations[key] || key;
+      
+      if (params) {
+        result = result.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => 
+          params[paramKey]?.toString() || match
+        );
+      }
+      
+      return result;
+    },
+    i18n: {
+      language: 'en',
+      changeLanguage: vi.fn(),
+    },
+    currentLanguage: 'en' as const,
+    isRTL: false,
+    changeLanguage: vi.fn(),
+    formatDate: (timestamp: number) => {
+      if (!timestamp) return '-';
+      return new Date(timestamp).toLocaleString();
+    },
+    formatNumber: (num: number) => num.toString(),
+  }),
+  usePlural: () => ({
+    getJobText: (count: number) => count === 1 ? 'job' : 'jobs',
+  }),
 }));
 
 // Global test cleanup

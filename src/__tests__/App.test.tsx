@@ -3,13 +3,8 @@ import { describe, it, expect } from 'vitest';
 import App from '../App';
 
 describe('App', () => {
-  it('renders welcome message', () => {
+  it('renders title', () => {
     render(<App />);
-    expect(screen.getByText(/welcome/i)).toBeInTheDocument();
-  });
-
-  it('renders hello world message', () => {
-    render(<App />);
-    expect(screen.getByText(/hello world/i)).toBeInTheDocument();
+    expect(screen.getByText(/Job Dashboard/i)).toBeInTheDocument();
   });
 });
