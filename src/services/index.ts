@@ -1,6 +1,7 @@
 import type { JobAPI, JobSignalRHub } from '@/types';
 import { mockApiService } from './mockApiService';
 import { mockSignalRService } from './mockSignalRService';
+import { realSignalRService } from './realSignalRService';
 import { isMockMode } from './serviceConfig';
 
 // Real API service placeholder (will throw errors since no backend)
@@ -59,8 +60,10 @@ export const apiService: JobAPI = isMockMode()
   ? mockApiService 
   : new RealApiService();
 
-export const signalRService: JobSignalRHub = mockSignalRService;
+export const signalRService: JobSignalRHub = isMockMode() 
+  ? mockSignalRService 
+  : realSignalRService;
 
 // Export individual services for testing
-export { mockApiService, mockSignalRService };
+export { mockApiService, mockSignalRService, realSignalRService };
 export * from './serviceConfig';

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prod": "vite --mode production",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
@@ -21,6 +22,7 @@
     "analyze": "npm run build && npx vite-bundle-analyzer dist"
   },
   "dependencies": {
+    "@microsoft/signalr": "^9.0.6",
     "@tanstack/react-query": "^4.40.1",
     "i18next": "^23.16.8",
     "i18next-browser-languagedetector": "^7.2.2",

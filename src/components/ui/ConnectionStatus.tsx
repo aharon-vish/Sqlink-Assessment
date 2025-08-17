@@ -92,6 +92,7 @@ export const ConnectionStatus: React.FC = () => {
   const { t } = useTranslation();
   const [connectionState, setConnectionState] = useState<'Connected' | 'Disconnected' | 'Connecting'>('Disconnected');
   const [isReconnecting, setIsReconnecting] = useState(false);
+  const [needsManualReconnect, setNeedsManualReconnect] = useState(false);
 
   useEffect(() => {
     // Initial state
@@ -102,9 +103,14 @@ export const ConnectionStatus: React.FC = () => {
       (signalRService as unknown as { onConnectionStateChanged: (callback: (state: 'Connected' | 'Disconnected' | 'Connecting') => void) => void }).onConnectionStateChanged(setConnectionState);
     }
 
-    // Poll connection state as fallback
+    // Poll connection state and manual reconnect status
     const pollInterval = setInterval(() => {
       setConnectionState(signalRService.getConnectionState());
+      
+      // Check if manual reconnect is needed (for real SignalR service)
+      if ('isManualReconnectNeeded' in signalRService) {
+        setNeedsManualReconnect((signalRService as any).isManualReconnectNeeded());
+      }
     }, 2000);
 
     return () => {
@@ -120,8 +126,14 @@ export const ConnectionStatus: React.FC = () => {
     
     setIsReconnecting(true);
     try {
-      await signalRService.stop();
-      await signalRService.start();
+      // Use manual reconnect if available (real SignalR service)
+      if ('manualReconnect' in signalRService) {
+        await (signalRService as any).manualReconnect();
+      } else {
+        // Fallback for mock service
+        await signalRService.stop();
+        await signalRService.start();
+      }
     } catch (error) {
       console.error('Manual reconnection failed:', error);
     } finally {
@@ -130,12 +142,19 @@ export const ConnectionStatus: React.FC = () => {
   };
 
   const getStatusText = () => {
+    if (needsManualReconnect && connectionState === 'Disconnected') {
+      return 'Connection failed - Manual reconnect required';
+    }
+    
     switch (connectionState) {
       case 'Connected': return t('connectionStatus.connected');
       case 'Disconnected': return t('connectionStatus.disconnected');
       case 'Connecting': return t('connectionStatus.connecting');
     }
   };
+
+  const showReconnectButton = connectionState === 'Disconnected' && 
+    (needsManualReconnect || import.meta.env.VITE_API_MODE !== 'real');
 
   return (
     <StatusContainer data-testid="connection-status">
@@ -144,7 +163,7 @@ export const ConnectionStatus: React.FC = () => {
         {getStatusText()}
       </StatusText>
       
-      {connectionState === 'Disconnected' && (
+      {showReconnectButton && (
         <ReconnectButton 
           onClick={handleReconnect}
           disabled={isReconnecting}
