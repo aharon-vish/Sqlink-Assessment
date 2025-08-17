@@ -29,6 +29,7 @@ const TableCell = styled.td`
   padding: 16px 12px;
   vertical-align: middle;
   font-size: 14px;
+  text-align: center;
 
   @media (max-width: 768px) {
     padding: 12px 8px;
@@ -43,11 +44,13 @@ const JobName = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin: 0 auto;
 `;
 
 const PriorityBadge = styled.span<{ priority: JobPriority }>`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 12px;
@@ -61,6 +64,7 @@ const PriorityBadge = styled.span<{ priority: JobPriority }>`
 const TimeDisplay = styled.div`
   color: #718096;
   font-size: 12px;
+  text-align: center;
   
   @media (max-width: 768px) {
     font-size: 10px;

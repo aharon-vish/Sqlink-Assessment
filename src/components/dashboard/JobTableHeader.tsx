@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import { useTranslation } from '@/hooks/useTranslation';
 import type { JobSorting } from '@/types';
 import type { Job } from '@/types';
 
@@ -17,7 +18,7 @@ const HeaderCell = styled.th.withConfig({
   shouldForwardProp: (prop) => prop !== 'sortable' && prop !== 'active'
 })<{ sortable?: boolean; active?: boolean }>`
   padding: 16px 12px;
-  text-align: left;
+  text-align: center;
   font-weight: 600;
   font-size: 14px;
   border-bottom: 1px solid #4a5568;
@@ -38,10 +39,20 @@ const HeaderCell = styled.th.withConfig({
 
   &:first-child {
     border-top-left-radius: 8px;
+    
+    [dir="rtl"] & {
+      border-top-left-radius: 0;
+      border-top-right-radius: 8px;
+    }
   }
   
   &:last-child {
     border-top-right-radius: 8px;
+    
+    [dir="rtl"] & {
+      border-top-right-radius: 0;
+      border-top-left-radius: 8px;
+    }
   }
 
   @media (max-width: 768px) {
@@ -59,20 +70,21 @@ const SortIcon = styled.span<{ direction: 'asc' | 'desc' }>`
   }
 `;
 
-const columns = [
-  { key: 'name' as keyof Job, label: 'Job Name', sortable: true },
-  { key: 'priority' as keyof Job, label: 'Priority', sortable: true },
-  { key: 'status' as keyof Job, label: 'Status', sortable: true },
-  { key: 'progress' as keyof Job, label: 'Progress', sortable: true },
-  { key: 'createdAt' as keyof Job, label: 'Start Time', sortable: true },
-  { key: 'completedAt' as keyof Job, label: 'End Time', sortable: true },
-  { key: 'actions' as const, label: 'Actions', sortable: false },
-];
-
 export const JobTableHeader: React.FC<JobTableHeaderProps> = ({ 
   sorting, 
   onSort 
 }) => {
+  const { t } = useTranslation();
+  
+  const columns = [
+    { key: 'name' as keyof Job, label: t('jobTable.columns.jobName'), sortable: true },
+    { key: 'priority' as keyof Job, label: t('jobTable.columns.priority'), sortable: true },
+    { key: 'status' as keyof Job, label: t('jobTable.columns.status'), sortable: true },
+    { key: 'progress' as keyof Job, label: t('jobTable.columns.progress'), sortable: true },
+    { key: 'createdAt' as keyof Job, label: t('jobTable.columns.startTime'), sortable: true },
+    { key: 'completedAt' as keyof Job, label: t('jobTable.columns.endTime'), sortable: true },
+    { key: 'actions' as const, label: t('jobTable.columns.actions'), sortable: false },
+  ];
   const handleSort = (column: keyof Job) => {
     if (sorting.column === column) {
       // Toggle direction if same column
