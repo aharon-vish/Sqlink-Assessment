@@ -62,16 +62,6 @@ const Label = styled.div`
   text-transform: capitalize;
 `;
 
-const StatusIcon = styled.div<{ color: string }>`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: ${({ color }) => color};
-`;
-
 export const StatusCard: React.FC<StatusCardProps> = ({
   status,
   count,
@@ -103,7 +93,6 @@ export const StatusCard: React.FC<StatusCardProps> = ({
       }}
       className="status-card"
     >
-      <StatusIcon color={color} />
       <Count>{count}</Count>
       <Label>{label}</Label>
     </CardContainer>
