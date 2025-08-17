@@ -67,3 +67,8 @@ export const signalRService: JobSignalRHub = isMockMode()
 // Export individual services for testing
 export { mockApiService, mockSignalRService, realSignalRService };
 export * from './serviceConfig';
+
+// Expose mockSignalRService to window for cross-module communication in mock mode
+if (isMockMode() && typeof window !== 'undefined') {
+  (window as any).mockSignalRService = mockSignalRService;
+}

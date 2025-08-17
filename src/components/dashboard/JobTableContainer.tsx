@@ -3,6 +3,7 @@ import { JobTable } from './JobTable';
 import { useJobStore } from '@/stores/jobStore';
 import { useUIStore } from '@/stores/uiStore';
 import { apiService } from '@/services';
+import { JobStatus } from '@/types/enums';
 import type { Job } from '@/types';
 
 export const JobTableContainer: React.FC = () => {
@@ -10,7 +11,8 @@ export const JobTableContainer: React.FC = () => {
     getFilteredJobs, 
     sorting, 
     setSorting, 
-    removeJob, 
+    removeJob,
+    updateJob, 
     setError,
     isLoading 
   } = useJobStore();
@@ -39,12 +41,23 @@ export const JobTableContainer: React.FC = () => {
           
         case 'restart':
           await apiService.restartJob(jobId);
-          // Job will be updated via SignalR
+          // Update job immediately in the store
+          updateJob(jobId, {
+            status: JobStatus.Pending,
+            progress: 0,
+            startedAt: 0,
+            completedAt: 0,
+            errorMessage: null,
+          });
           break;
           
         case 'stop':
           await apiService.stopJob(jobId);
-          // Job will be updated via SignalR
+          // Update job immediately in the store
+          updateJob(jobId, {
+            status: JobStatus.Stopped,
+            completedAt: Date.now(),
+          });
           break;
       }
     } catch (error) {

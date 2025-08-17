@@ -63,6 +63,22 @@
       "delete": "Delete",
       "restart": "Restart", 
       "stop": "Stop"
+    },
+    "confirmations": {
+      "delete": {
+        "title": "Delete Job",
+        "message": "Are you sure you want to delete \"{{jobName}}\"? This action cannot be undone."
+      },
+      "restart": {
+        "title": "Restart Job",
+        "message": "Are you sure you want to restart \"{{jobName}}\"? The job will start from the beginning."
+      },
+      "stop": {
+        "title": "Stop Job",
+        "message": "Are you sure you want to stop \"{{jobName}}\"? You can restart it later."
+      },
+      "cancel": "Cancel",
+      "confirm": "Confirm"
     }
   },
 

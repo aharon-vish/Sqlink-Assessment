@@ -1,16 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { Job, CreateJobRequest, JobAPI, ApiResponse } from '@/types';
 import { JobStatus, JobPriority } from '@/types/enums';
-import { mockSignalRService } from './mockSignalRService';
-
-interface JobLifecycleConfig {
-  pendingToQueueDelay: [number, number]; // [min, max] in ms
-  queueToRunningDelay: [number, number];
-  progressUpdateInterval: number;
-  progressIncrementRange: [number, number];
-  successRate: number; // 0-1
-  averageJobDuration: number; // ms
-}
 
 // Mock data generator
 const generateMockJob = (
@@ -87,6 +77,15 @@ class MockApiService implements JobAPI {
     job.status = JobStatus.Stopped;
     job.completedAt = Date.now();
 
+    // Emit SignalR event for status update
+    if (typeof window !== 'undefined' && (window as any).mockSignalRService) {
+      (window as any).mockSignalRService.emitProgressUpdate({
+        jobID: jobId,
+        status: job.status,
+        progress: job.progress,
+      });
+    }
+
     return {
       isSuccess: true,
       message: 'Job stopped successfully',
@@ -110,6 +109,15 @@ class MockApiService implements JobAPI {
     job.startedAt = 0;
     job.completedAt = 0;
     job.errorMessage = null;
+
+    // Emit SignalR event for status update
+    if (typeof window !== 'undefined' && (window as any).mockSignalRService) {
+      (window as any).mockSignalRService.emitProgressUpdate({
+        jobID: jobId,
+        status: job.status,
+        progress: job.progress,
+      });
+    }
 
     // Start job lifecycle simulation
     this.simulateJobLifecycle(job.jobID);

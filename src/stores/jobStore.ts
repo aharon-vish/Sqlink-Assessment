@@ -27,52 +27,44 @@ export const useJobStore = create<JobStore>()(
 
       // Actions
       setJobs: (jobs) => {
-        set({ jobs }, false, 'setJobs');
-        get().updateStatusCards();
+        set(() => {
+          const statusCards = get().calculateStatusCards(jobs);
+          return { jobs, statusCards };
+        }, false, 'setJobs');
       },
 
       addJob: (job) => {
-        set(
-          (state) => ({ jobs: [...state.jobs, job] }),
-          false,
-          'addJob'
-        );
-        get().updateStatusCards();
+        set((state) => {
+          const newJobs = [...state.jobs, job];
+          const statusCards = get().calculateStatusCards(newJobs);
+          return { jobs: newJobs, statusCards };
+        }, false, 'addJob');
       },
 
       updateJob: (jobId, updates) => {
-        set(
-          (state) => ({
-            jobs: state.jobs.map((job) =>
-              job.jobID === jobId ? { ...job, ...updates } : job
-            ),
-          }),
-          false,
-          'updateJob'
-        );
-        get().updateStatusCards();
+        set((state) => {
+          const newJobs = state.jobs.map((job) =>
+            job.jobID === jobId ? { ...job, ...updates } : job
+          );
+          const statusCards = get().calculateStatusCards(newJobs);
+          return { jobs: newJobs, statusCards };
+        }, false, 'updateJob');
       },
 
       removeJob: (jobId) => {
-        set(
-          (state) => ({
-            jobs: state.jobs.filter((job) => job.jobID !== jobId),
-          }),
-          false,
-          'removeJob'
-        );
-        get().updateStatusCards();
+        set((state) => {
+          const newJobs = state.jobs.filter((job) => job.jobID !== jobId);
+          const statusCards = get().calculateStatusCards(newJobs);
+          return { jobs: newJobs, statusCards };
+        }, false, 'removeJob');
       },
 
       removeJobsByStatus: (status) => {
-        set(
-          (state) => ({
-            jobs: state.jobs.filter((job) => job.status !== status),
-          }),
-          false,
-          'removeJobsByStatus'
-        );
-        get().updateStatusCards();
+        set((state) => {
+          const newJobs = state.jobs.filter((job) => job.status !== status);
+          const statusCards = get().calculateStatusCards(newJobs);
+          return { jobs: newJobs, statusCards };
+        }, false, 'removeJobsByStatus');
       },
 
       // Filters & Sorting
@@ -184,8 +176,22 @@ export const useJobStore = create<JobStore>()(
       },
 
       // Internal helper
-      updateStatusCards: () => {
-        const counts = get().getJobCounts();
+      calculateStatusCards: (jobs: Job[]) => {
+        const counts: Record<JobStatus, number> = {
+          [JobStatus.Pending]: 0,
+          [JobStatus.InQueue]: 0,
+          [JobStatus.Running]: 0,
+          [JobStatus.Completed]: 0,
+          [JobStatus.Failed]: 0,
+          [JobStatus.Stopped]: 0,
+        };
+
+        if (jobs && Array.isArray(jobs)) {
+          jobs.forEach((job) => {
+            counts[job.status]++;
+          });
+        }
+
         const statusCards: StatusCard[] = Object.values(JobStatus)
           .filter((status) => typeof status === 'number')
           .map((status) => ({
@@ -195,6 +201,12 @@ export const useJobStore = create<JobStore>()(
             color: getJobStatusColor(status as JobStatus),
           }));
 
+        return statusCards;
+      },
+
+      updateStatusCards: () => {
+        const jobs = get().jobs;
+        const statusCards = get().calculateStatusCards(jobs);
         set({ statusCards }, false, 'updateStatusCards');
       },
     }),

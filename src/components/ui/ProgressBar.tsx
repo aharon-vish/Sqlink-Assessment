@@ -61,6 +61,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 }) => {
   const color = getJobStatusColor(status);
   const clampedProgress = Math.min(Math.max(progress, 0), 100);
+  const roundedProgress = Math.round(clampedProgress);
 
   return (
     <ProgressContainer size={size}>
@@ -68,7 +69,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
         <ProgressFill $progress={clampedProgress} $color={color} />
       </ProgressTrack>
       {showPercentage && (
-        <ProgressText>{clampedProgress}%</ProgressText>
+        <ProgressText>{roundedProgress}%</ProgressText>
       )}
     </ProgressContainer>
   );

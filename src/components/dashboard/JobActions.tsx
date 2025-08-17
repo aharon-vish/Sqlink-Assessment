@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Button } from '@/components/ui';
+import { useTranslation } from '@/hooks/useTranslation';
 import type { Job } from '@/types';
 import { canStopJob, canRestartJob, canDeleteJob } from '@/types/enums';
 
@@ -62,6 +63,7 @@ export const JobActions: React.FC<JobActionsProps> = ({
   onAction, 
   loading = false 
 }) => {
+  const { t } = useTranslation();
   const [confirmAction, setConfirmAction] = useState<{
     type: 'delete' | 'restart' | 'stop';
     title: string;
@@ -72,18 +74,18 @@ export const JobActions: React.FC<JobActionsProps> = ({
     const confirmations = {
       delete: {
         type: 'delete' as const,
-        title: 'Delete Job',
-        message: `Are you sure you want to delete "${job.name}"? This action cannot be undone.`
+        title: t('jobTable.confirmations.delete.title'),
+        message: t('jobTable.confirmations.delete.message', { jobName: job.name })
       },
       restart: {
         type: 'restart' as const,
-        title: 'Restart Job',
-        message: `Are you sure you want to restart "${job.name}"? The job will start from the beginning.`
+        title: t('jobTable.confirmations.restart.title'),
+        message: t('jobTable.confirmations.restart.message', { jobName: job.name })
       },
       stop: {
         type: 'stop' as const,
-        title: 'Stop Job',
-        message: `Are you sure you want to stop "${job.name}"? You can restart it later.`
+        title: t('jobTable.confirmations.stop.title'),
+        message: t('jobTable.confirmations.stop.message', { jobName: job.name })
       }
     };
 
@@ -112,7 +114,7 @@ export const JobActions: React.FC<JobActionsProps> = ({
             disabled={loading}
             data-testid={`delete-job-${job.jobID}`}
           >
-            Delete
+            {t('jobTable.actions.delete')}
           </Button>
         )}
         
@@ -124,7 +126,7 @@ export const JobActions: React.FC<JobActionsProps> = ({
             disabled={loading}
             data-testid={`restart-job-${job.jobID}`}
           >
-            Restart
+            {t('jobTable.actions.restart')}
           </Button>
         )}
         
@@ -136,7 +138,7 @@ export const JobActions: React.FC<JobActionsProps> = ({
             disabled={loading}
             data-testid={`stop-job-${job.jobID}`}
           >
-            Stop
+            {t('jobTable.actions.stop')}
           </Button>
         )}
       </ActionsContainer>
@@ -148,15 +150,14 @@ export const JobActions: React.FC<JobActionsProps> = ({
             <ConfirmMessage>{confirmAction.message}</ConfirmMessage>
             <ConfirmActions>
               <Button variant="secondary" onClick={handleCancel}>
-                Cancel
+                {t('jobTable.confirmations.cancel')}
               </Button>
               <Button 
                 variant={confirmAction.type === 'delete' ? 'danger' : 'primary'}
                 onClick={handleConfirm}
                 loading={loading}
               >
-                {confirmAction.type === 'delete' ? 'Delete' : 
-                 confirmAction.type === 'restart' ? 'Restart' : 'Stop'}
+                {t(`jobTable.actions.${confirmAction.type}`)}
               </Button>
             </ConfirmActions>
           </ConfirmContent>
