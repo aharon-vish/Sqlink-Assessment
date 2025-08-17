@@ -1,0 +1,144 @@
+{
+  "common": {
+    "loading": "טוען...",
+    "error": "שגיאה",
+    "success": "הצלחה",
+    "cancel": "בטל",
+    "confirm": "אשר",
+    "delete": "מחק",
+    "create": "צור",
+    "save": "שמור",
+    "close": "סגור",
+    "search": "חפש",
+    "filter": "סנן",
+    "clear": "נקה",
+    "retry": "נסה שוב",
+    "reconnect": "התחבר מחדש",
+    "connecting": "מתחבר...",
+    "actions": "פעולות"
+  },
+
+  "dashboard": {
+    "title": "לוח בקרת משימות",
+    "createNewJob": "צור משימה חדשה",
+    "deleteJobs": "מחק משימות",
+    "searchPlaceholder": "חפש משימות לפי שם...",
+    "showingResults": "מציג {{count}} מתוך {{total}} משימות",
+    "clearFilters": "נקה מסננים",
+    "noJobsFound": "לא נמצאו משימות",
+    "noJobsMessage": "אין משימות התואמות למסננים הנוכחיים. נסה לשנות את קריטריוני החיפוש או צור משימה חדשה."
+  },
+
+  "connectionStatus": {
+    "connected": "מחובר בזמן אמת",
+    "disconnected": "מנותק מחיבור זמן אמת",
+    "connecting": "מתחבר..."
+  },
+
+  "jobStatus": {
+    "pending": "ממתין",
+    "inQueue": "בתור",
+    "running": "רץ",
+    "completed": "הושלם",
+    "failed": "נכשל",
+    "stopped": "נעצר"
+  },
+
+  "jobPriority": {
+    "regular": "רגיל",
+    "high": "גבוה"
+  },
+
+  "jobTable": {
+    "columns": {
+      "jobName": "שם המשימה",
+      "priority": "עדיפות",
+      "status": "סטטוס",
+      "progress": "התקדמות",
+      "startTime": "זמן התחלה",
+      "endTime": "זמן סיום",
+      "actions": "פעולות"
+    },
+    "actions": {
+      "delete": "מחק",
+      "restart": "הפעל מחדש",
+      "stop": "עצור"
+    }
+  },
+
+  "statusCards": {
+    "pending": "ממתין",
+    "inQueue": "בתור", 
+    "running": "רץ",
+    "completed": "הושלם",
+    "failed": "נכשל",
+    "stopped": "נעצר"
+  },
+
+  "createJobModal": {
+    "title": "צור משימה חדשה",
+    "jobNameLabel": "שם המשימה",
+    "jobNamePlaceholder": "הכנס שם תיאורי למשימה",
+    "priorityLabel": "עדיפות",
+    "createButton": "צור משימה",
+    "validation": {
+      "nameRequired": "שם המשימה נדרש",
+      "nameMinLength": "שם המשימה חייב להכיל לפחות 3 תווים",
+      "nameMaxLength": "שם המשימה חייב להכיל פחות מ-100 תווים",
+      "nameInvalidChars": "שם המשימה יכול להכיל רק אותיות, מספרים, רווחים, מקפים וקו תחתון",
+      "priorityRequired": "אנא בחר עדיפות תקפה",
+      "duplicateName": "משימה עם השם הזה כבר קיימת"
+    }
+  },
+
+  "deleteJobsModal": {
+    "title": "מחק משימות",
+    "warning": "פעולה זו תמחק לצמיתות את כל המשימות עם הסטטוס הנבחר. לא ניתן לבטל פעולה זו.",
+    "statusLabel": "סטטוס למחיקה",
+    "jobCount": "{{count}} {{status}} {{jobText}} יימחקו.",
+    "deleteButton": "מחק {{count}} {{jobText}}",
+    "noJobsError": "לא נמצאו משימות {{status}} למחיקה"
+  },
+
+  "jobActions": {
+    "confirmDelete": {
+      "title": "מחק משימה",
+      "message": "האם אתה בטוח שברצונך למחוק את \"{{jobName}}\"? לא ניתן לבטל פעולה זו."
+    },
+    "confirmRestart": {
+      "title": "הפעל משימה מחדש",
+      "message": "האם אתה בטוח שברצונך להפעיל מחדש את \"{{jobName}}\"? המשימה תתחיל מההתחלה."
+    },
+    "confirmStop": {
+      "title": "עצור משימה",
+      "message": "האם אתה בטוח שברצונך לעצור את \"{{jobName}}\"? תוכל להפעיל אותה מחדש מאוחר יותר."
+    }
+  },
+
+  "notifications": {
+    "jobCompleted": "{{jobName}} הושלמה בהצלחה",
+    "jobFailed": "{{jobName}} נכשלה",
+    "jobStarted": "{{jobName}} החלה לרוץ",
+    "connectionLost": "החיבור אבד - מנסה להתחבר מחדש",
+    "connectionRestored": "החיבור שוחזר"
+  },
+
+  "errors": {
+    "failedToLoad": "נכשל לטעון משימות",
+    "failedToCreate": "נכשל ליצור משימה",
+    "failedToDelete": "נכשל למחוק משימה", 
+    "failedToRestart": "נכשל להפעיל משימה מחדש",
+    "failedToStop": "נכשל לעצור משימה",
+    "networkError": "שגיאת רשת - אנא בדוק את החיבור שלך",
+    "serverError": "שגיאת שרת - אנא נסה שוב מאוחר יותר",
+    "unknownError": "אירעה שגיאה לא צפויה"
+  },
+
+  "accessibility": {
+    "sortAscending": "מיין עולה לפי {{column}}",
+    "sortDescending": "מיין יורד לפי {{column}}",
+    "filterByStatus": "סנן משימות לפי סטטוס {{status}}",
+    "jobProgress": "התקדמות המשימה: {{progress}} אחוזים",
+    "connectionStatus": "סטטוס החיבור: {{status}}"
+  }
+}

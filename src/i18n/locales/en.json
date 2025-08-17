@@ -1,0 +1,144 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "create": "Create",
+    "save": "Save",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "retry": "Retry",
+    "reconnect": "Reconnect",
+    "connecting": "Connecting...",
+    "actions": "Actions"
+  },
+  
+  "dashboard": {
+    "title": "Job Dashboard",
+    "createNewJob": "Create New Job",
+    "deleteJobs": "Delete Jobs",
+    "searchPlaceholder": "Search jobs by name...",
+    "showingResults": "Showing {{count}} of {{total}} jobs",
+    "clearFilters": "Clear Filters",
+    "noJobsFound": "No jobs found",
+    "noJobsMessage": "No jobs match your current filters. Try adjusting your search criteria or create a new job."
+  },
+
+  "connectionStatus": {
+    "connected": "Real-time Connected",
+    "disconnected": "Real-time Disconnected",
+    "connecting": "Connecting..."
+  },
+
+  "jobStatus": {
+    "pending": "Pending",
+    "inQueue": "In Queue", 
+    "running": "Running",
+    "completed": "Completed",
+    "failed": "Failed",
+    "stopped": "Stopped"
+  },
+
+  "jobPriority": {
+    "regular": "Regular",
+    "high": "High"
+  },
+
+  "jobTable": {
+    "columns": {
+      "jobName": "Job Name",
+      "priority": "Priority", 
+      "status": "Status",
+      "progress": "Progress",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "actions": "Actions"
+    },
+    "actions": {
+      "delete": "Delete",
+      "restart": "Restart", 
+      "stop": "Stop"
+    }
+  },
+
+  "statusCards": {
+    "pending": "Pending",
+    "inQueue": "In Queue",
+    "running": "Running", 
+    "completed": "Completed",
+    "failed": "Failed",
+    "stopped": "Stopped"
+  },
+
+  "createJobModal": {
+    "title": "Create New Job",
+    "jobNameLabel": "Job Name",
+    "jobNamePlaceholder": "Enter a descriptive job name",
+    "priorityLabel": "Priority",
+    "createButton": "Create Job",
+    "validation": {
+      "nameRequired": "Job name is required",
+      "nameMinLength": "Job name must be at least 3 characters",
+      "nameMaxLength": "Job name must be less than 100 characters",
+      "nameInvalidChars": "Job name can only contain letters, numbers, spaces, hyphens, and underscores",
+      "priorityRequired": "Please select a valid priority",
+      "duplicateName": "A job with this name already exists"
+    }
+  },
+
+  "deleteJobsModal": {
+    "title": "Delete Jobs",
+    "warning": "This action will permanently delete all jobs with the selected status. This cannot be undone.",
+    "statusLabel": "Status to Delete",
+    "jobCount": "{{count}} {{status}} {{jobText}} will be deleted.",
+    "deleteButton": "Delete {{count}} {{jobText}}",
+    "noJobsError": "No {{status}} jobs found to delete"
+  },
+
+  "jobActions": {
+    "confirmDelete": {
+      "title": "Delete Job",
+      "message": "Are you sure you want to delete \"{{jobName}}\"? This action cannot be undone."
+    },
+    "confirmRestart": {
+      "title": "Restart Job", 
+      "message": "Are you sure you want to restart \"{{jobName}}\"? The job will start from the beginning."
+    },
+    "confirmStop": {
+      "title": "Stop Job",
+      "message": "Are you sure you want to stop \"{{jobName}}\"? You can restart it later."
+    }
+  },
+
+  "notifications": {
+    "jobCompleted": "{{jobName}} completed successfully",
+    "jobFailed": "{{jobName}} failed",
+    "jobStarted": "{{jobName}} started running",
+    "connectionLost": "Connection lost - attempting to reconnect",
+    "connectionRestored": "Connection restored"
+  },
+
+  "errors": {
+    "failedToLoad": "Failed to load jobs",
+    "failedToCreate": "Failed to create job", 
+    "failedToDelete": "Failed to delete job",
+    "failedToRestart": "Failed to restart job",
+    "failedToStop": "Failed to stop job",
+    "networkError": "Network error - please check your connection",
+    "serverError": "Server error - please try again later",
+    "unknownError": "An unexpected error occurred"
+  },
+
+  "accessibility": {
+    "sortAscending": "Sort ascending by {{column}}",
+    "sortDescending": "Sort descending by {{column}}",
+    "filterByStatus": "Filter jobs by {{status}} status",
+    "jobProgress": "Job progress: {{progress}} percent",
+    "connectionStatus": "Connection status: {{status}}"
+  }
+}
