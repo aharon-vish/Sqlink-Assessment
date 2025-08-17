@@ -250,9 +250,9 @@ class MockApiService implements JobAPI {
               });
             }
           }
-        }, 1000);
+        }, 500);
       }
-    }, 1500); // Update every 1.5 seconds
+    }, 1000); // Update every 1.5 seconds
   }
 }
 
