@@ -39,6 +39,9 @@ const Flag = styled.span`
   font-size: 18px;
   line-height: 1;
 `;
+const NativeName = styled.span`
+  color:black;
+`;
 
 const LanguageText = styled.span`
   font-weight: 500;
@@ -159,7 +162,7 @@ export const LanguageSelector: React.FC = () => {
             data-testid={`language-option-${language.code}`}
           >
             <Flag>{language.flag}</Flag>
-            <span>{"language.nativeName"}</span>
+            <NativeName>{language.nativeName}</NativeName>
           </LanguageOption>
         ))}
       </Dropdown>

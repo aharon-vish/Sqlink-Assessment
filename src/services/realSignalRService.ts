@@ -13,6 +13,7 @@ class RealSignalRService implements JobSignalRHub {
   private failedAttempts = 0;
   private maxFailedAttempts = 5;
   private isManuallyDisconnected = false;
+  private hasLoggedMaxAttempts = false;
 
   constructor() {
     this.initializeConnection();
@@ -21,27 +22,9 @@ class RealSignalRService implements JobSignalRHub {
   private initializeConnection(): void {
     const config = getServiceConfig();
     
+    // Disable auto-reconnect completely - we'll handle retries manually
     this.connection = new HubConnectionBuilder()
       .withUrl(config.signalRHubUrl)
-      .withAutomaticReconnect({
-        nextRetryDelayInMilliseconds: (retryContext) => {
-          // Stop auto-reconnect after max failed attempts or if manually disconnected
-          if (this.failedAttempts >= this.maxFailedAttempts || this.isManuallyDisconnected) {
-            return null; // Stop auto-reconnect
-          }
-          
-          // Exponential backoff: 0, 2, 10, 30 seconds then every 30 seconds
-          if (retryContext.previousRetryCount === 0) {
-            return 0;
-          } else if (retryContext.previousRetryCount === 1) {
-            return 2000;
-          } else if (retryContext.previousRetryCount === 2) {
-            return 10000;
-          } else {
-            return 30000;
-          }
-        }
-      })
       .build();
 
     // Set up event handlers
@@ -62,25 +45,23 @@ class RealSignalRService implements JobSignalRHub {
       });
     });
 
-    // Handle connection state changes
+    // Handle connection state changes (no auto-reconnect, so simpler handlers)
     this.connection.onclose((error) => {
       console.log('SignalR connection closed:', error);
-      if (error) {
-        this.failedAttempts++;
-        console.log(`SignalR failed attempts: ${this.failedAttempts}/${this.maxFailedAttempts}`);
-      }
       this.notifyConnectionState('Disconnected');
-    });
-
-    this.connection.onreconnecting((error) => {
-      console.log('SignalR reconnecting:', error);
-      this.notifyConnectionState('Connecting');
-    });
-
-    this.connection.onreconnected((connectionId) => {
-      console.log('SignalR reconnected with ID:', connectionId);
-      this.failedAttempts = 0; // Reset failed attempts on successful reconnection
-      this.notifyConnectionState('Connected');
+      
+      // Only attempt reconnect if we haven't exceeded max attempts and not manually disconnected
+      if (error && !this.isManuallyDisconnected && this.failedAttempts < this.maxFailedAttempts) {
+        console.log(`Connection lost, will retry in 3 seconds (attempt ${this.failedAttempts + 1}/${this.maxFailedAttempts})`);
+        setTimeout(() => {
+          if (!this.isManuallyDisconnected && this.failedAttempts < this.maxFailedAttempts) {
+            this.start().catch(console.error);
+          }
+        }, 3000);
+      } else if (this.failedAttempts >= this.maxFailedAttempts) {
+        console.log('Max failed attempts reached - no more auto-reconnects');
+        this.isManuallyDisconnected = true;
+      }
     });
   }
 
@@ -89,19 +70,39 @@ class RealSignalRService implements JobSignalRHub {
       throw new Error('SignalR connection not initialized');
     }
 
+    // Check if we've exceeded max attempts - only log once
+    if (this.failedAttempts >= this.maxFailedAttempts) {
+      if (!this.hasLoggedMaxAttempts) {
+        console.error(`Max connection attempts (${this.maxFailedAttempts}) exceeded. Use manual reconnect.`);
+        this.hasLoggedMaxAttempts = true;
+        this.isManuallyDisconnected = true;
+      }
+      return; // Silently return instead of throwing error
+    }
+
     // Check if already connected or connecting
     if (this.connection.state === HubConnectionState.Connected || 
-        this.connection.state === HubConnectionState.Connecting ||
-        this.connection.state === HubConnectionState.Reconnecting) {
+        this.connection.state === HubConnectionState.Connecting) {
       return;
     }
 
+    // Add timeout to prevent hanging
+    const startWithTimeout = () => {
+      return Promise.race([
+        this.connection!.start(),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Connection timeout after 5 seconds')), 5000)
+        )
+      ]);
+    };
+
     try {
-      this.isManuallyDisconnected = false; // Reset manual disconnect flag
       this.notifyConnectionState('Connecting');
-      await this.connection.start();
+      await startWithTimeout();
       this.isStarted = true;
       this.failedAttempts = 0; // Reset failed attempts on successful connection
+      this.isManuallyDisconnected = false;
+      this.hasLoggedMaxAttempts = false; // Reset log flag
       this.notifyConnectionState('Connected');
       console.log('SignalR connected successfully');
     } catch (error) {
@@ -109,6 +110,13 @@ class RealSignalRService implements JobSignalRHub {
       this.failedAttempts++;
       this.notifyConnectionState('Disconnected');
       console.error(`Failed to start SignalR connection (attempt ${this.failedAttempts}/${this.maxFailedAttempts}):`, error);
+      
+      // Mark as manually disconnected if we've hit the limit
+      if (this.failedAttempts >= this.maxFailedAttempts) {
+        console.log('Max attempts reached - no more auto-retries');
+        this.isManuallyDisconnected = true;
+      }
+      
       throw error;
     }
   }
@@ -227,6 +235,7 @@ class RealSignalRService implements JobSignalRHub {
     console.log('Manual reconnection initiated');
     this.failedAttempts = 0; // Reset failed attempts
     this.isManuallyDisconnected = false;
+    this.hasLoggedMaxAttempts = false; // Reset log flag
     
     // Recreate connection to clear any internal state
     if (this.connection) {

@@ -80,15 +80,7 @@
     "jobNameLabel": "Job Name",
     "jobNamePlaceholder": "Enter a descriptive job name",
     "priorityLabel": "Priority",
-    "createButton": "Create Job",
-    "validation": {
-      "nameRequired": "Job name is required",
-      "nameMinLength": "Job name must be at least 3 characters",
-      "nameMaxLength": "Job name must be less than 100 characters",
-      "nameInvalidChars": "Job name can only contain letters, numbers, spaces, hyphens, and underscores",
-      "priorityRequired": "Please select a valid priority",
-      "duplicateName": "A job with this name already exists"
-    }
+    "createButton": "Create Job"
   },
 
   "deleteJobsModal": {
@@ -140,5 +132,25 @@
     "filterByStatus": "Filter jobs by {{status}} status",
     "jobProgress": "Job progress: {{progress}} percent",
     "connectionStatus": "Connection status: {{status}}"
+  },
+  "createJobForm": {
+    "labels": {
+      "jobName": "Job Name",
+      "priority": "Priority"
+    },
+    "placeholders": {
+      "jobName": "Enter job name"
+    },
+    "errors": {
+      "submitFailed": "Failed to create job"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "create": "Create Job"
+    },
+        "priority":{
+      "regular":"Regular",
+      "high":"High"
+    }
   }
 }

@@ -73,60 +73,49 @@ export const Dashboard: React.FC = () => {
     loadJobs();
   }, [setJobs, setLoading, setError]);
 
-  // Set up SignalR connection with enhanced real-time features
+  // Set up SignalR connection with enhanced real-time features (non-blocking)
   useEffect(() => {
-    const setupSignalR = async () => {
-      try {
-        await signalRService.start();
-        
-        signalRService.onJobProgressUpdate((update) => {
-          const existingJob = jobs.find(j => j.jobID === update.jobID);
-          
-          if (existingJob) {
-            const previousStatus = existingJob.status;
-            
-            updateJob(update.jobID, {
-              status: update.status,
-              progress: update.progress,
-              // Update timestamps based on status changes
-              ...(update.status === JobStatus.Running && previousStatus !== JobStatus.Running && { 
-                startedAt: Date.now() 
-              }),
-              ...(update.status >= JobStatus.Completed && previousStatus < JobStatus.Completed && { 
-                completedAt: Date.now() 
-              }),
-            });
-
-            // Show notification for significant status changes
-            if (previousStatus !== update.status) {
-              const jobName = existingJob.name;
-              const statusLabel = getJobStatusLabel(update.status);
-              
-              if (update.status === JobStatus.Completed) {
-                showNotification(`✅ ${jobName} completed successfully`);
-              } else if (update.status === JobStatus.Failed) {
-                showNotification(`❌ ${jobName} failed`);
-              } else if (update.status === JobStatus.Running) {
-                showNotification(`🔄 ${jobName} started running`);
-              }
-            }
-          }
+    const setupSignalR = () => {
+      // Set up progress update handler first
+      signalRService.onJobProgressUpdate((update) => {
+        updateJob(update.jobID, {
+          status: update.status,
+          progress: update.progress,
+          // Update timestamps based on status changes
+          ...(update.status === JobStatus.Running && { 
+            startedAt: Date.now() 
+          }),
+          ...(update.status >= JobStatus.Completed && { 
+            completedAt: Date.now() 
+          }),
         });
-      } catch (error) {
+
+        // Show notifications for status changes
+        if (update.status === JobStatus.Completed) {
+          showNotification(`✅ Job completed successfully`);
+        } else if (update.status === JobStatus.Failed) {
+          showNotification(`❌ Job failed`);
+        } else if (update.status === JobStatus.Running) {
+          showNotification(`🔄 Job started running`);
+        }
+      });
+
+      // Start connection asynchronously (non-blocking)
+      signalRService.start().catch(error => {
         console.error('Failed to connect to SignalR:', error);
         // Show connection error only for real API mode
         if (import.meta.env.VITE_API_MODE === 'real') {
           setError('Real-time updates unavailable');
         }
-      }
+      });
     };
 
     setupSignalR();
 
     return () => {
-      signalRService.stop();
+      signalRService.stop().catch(console.error);
     };
-  }, [updateJob, setError, showNotification, jobs]);
+  }, [updateJob, setError, showNotification]);
 
   // Auto-refresh data periodically as fallback
   useEffect(() => {

@@ -14,10 +14,8 @@ const ContentWrapper = styled.div`
   max-width: 1600px;
   padding: 0 32px;
   
-  /* Force absolute centering on desktop */
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
+  /* Use margin auto for RTL-safe centering */
+  margin: 0 auto;
   
   /* Allow content direction to be inherited from document */
   direction: inherit;
@@ -27,11 +25,6 @@ const ContentWrapper = styled.div`
   }
 
   @media (max-width: 768px) {
-    /* Use normal flow on mobile for better performance */
-    position: static;
-    left: auto;
-    transform: none;
-    margin: 0 auto;
     padding: 0 16px;
     max-width: 100%;
   }

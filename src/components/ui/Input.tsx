@@ -62,7 +62,7 @@ const StyledSelect = styled.select.withConfig({
   font-size: 14px;
   background-color: white;
   transition: border-color 0.2s ease-in-out;
-  
+  color:black;
   &:focus {
     outline: none;
     border-color: ${({ hasError }) => hasError ? '#e53e3e' : '#3182ce'};

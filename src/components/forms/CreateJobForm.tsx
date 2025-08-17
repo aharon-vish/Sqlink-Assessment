@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Input, Select, Button } from '@/components/ui';
+import { useTranslation } from '@/hooks/useTranslation';
 import type { CreateJobFormData } from '@/types';
 import { JobPriority, getJobPriorityLabel } from '@/types/enums';
 
@@ -36,8 +37,6 @@ const ErrorMessage = styled.div`
 `;
 
 interface FormErrors {
-  name?: string;
-  priority?: string;
   submit?: string;
 }
 
@@ -46,111 +45,44 @@ export const CreateJobForm: React.FC<CreateJobFormProps> = ({
   onCancel,
   loading = false
 }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<CreateJobFormData>({
     name: '',
     priority: JobPriority.Regular
   });
   
   const [errors, setErrors] = useState<FormErrors>({});
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const validateField = (field: keyof CreateJobFormData, value: string | JobPriority): string | undefined => {
-    switch (field) {
-      case 'name': {
-        const trimmedName = (value as string).trim();
-        if (!trimmedName) {
-          return 'Job name is required';
-        }
-        if (trimmedName.length < 3) {
-          return 'Job name must be at least 3 characters';
-        }
-        if (trimmedName.length > 100) {
-          return 'Job name must be less than 100 characters';
-        }
-        if (!/^[a-zA-Z0-9\s\-_]+$/.test(trimmedName)) {
-          return 'Job name can only contain letters, numbers, spaces, hyphens, and underscores';
-        }
-        return undefined;
-      }
-      
-      case 'priority': {
-        if (value !== JobPriority.Regular && value !== JobPriority.High) {
-          return 'Please select a valid priority';
-        }
-        return undefined;
-      }
-      
-      default:
-        return undefined;
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-    
-    // Validate all fields
-    Object.keys(formData).forEach(field => {
-      const error = validateField(field as keyof CreateJobFormData, formData[field as keyof CreateJobFormData]);
-      if (error) {
-        newErrors[field as keyof FormErrors] = error;
-      }
-    });
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleFieldChange = (field: keyof CreateJobFormData, value: string | JobPriority) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
-    // Clear field error when user starts typing
-    if (errors[field as keyof FormErrors]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
-    }
-
-    // Validate field on change if it was touched
-    if (touched[field]) {
-      const error = validateField(field, value);
-      setErrors(prev => ({ ...prev, [field]: error }));
-    }
-  };
-
-  const handleFieldBlur = (field: keyof CreateJobFormData) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-    
-    const error = validateField(field, formData[field]);
-    setErrors(prev => ({ ...prev, [field]: error }));
+    console.log('handleFieldChange called:', field, value, 'current state:', formData);
+    setFormData(prev => {
+      const newState = { ...prev, [field]: value };
+      console.log('New state:', newState);
+      return newState;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Mark all fields as touched
-    setTouched({
-      name: true,
-      priority: true
-    });
-
-    if (!validateForm()) {
-      return;
-    }
 
     try {
-      // Clear any previous submit errors
       setErrors(prev => ({ ...prev, submit: undefined }));
       
-      await onSubmit({
+      onSubmit({
         name: formData.name.trim(),
         priority: formData.priority
       });
     } catch (error) {
       setErrors(prev => ({
         ...prev,
-        submit: error instanceof Error ? error.message : 'Failed to create job'
+        submit: error instanceof Error ? error.message : t('createJobForm.errors.submitFailed')
       }));
     }
   };
 
+  console.log('Rendering with formData:', formData);
+  
   return (
     <Form onSubmit={handleSubmit} noValidate>
       {errors.submit && (
@@ -158,32 +90,31 @@ export const CreateJobForm: React.FC<CreateJobFormProps> = ({
       )}
       
       <Input
-        label="Job Name"
-        placeholder="Enter job name"
+        label={t('createJobForm.labels.jobName')}
+        placeholder={t('createJobForm.placeholders.jobName')}
         value={formData.name}
         onChange={(e) => handleFieldChange('name', e.target.value)}
-        onBlur={() => handleFieldBlur('name')}
-        error={touched.name ? errors.name : undefined}
         required
         disabled={loading}
         data-testid="modal-submit-create-job"
       />
       
       <Select
-        label="Priority"
+        label={t('createJobForm.labels.priority')}
         value={formData.priority.toString()}
-        onChange={(e) => handleFieldChange('priority', parseInt(e.target.value) as JobPriority)}
-        onBlur={() => handleFieldBlur('priority')}
-        error={touched.priority ? errors.priority : undefined}
+        onChange={(e) => {
+          console.log('Select changed:', e.target.value, 'parsed:', parseInt(e.target.value));
+          handleFieldChange('priority', parseInt(e.target.value) as JobPriority);
+        }}
         required
         disabled={loading}
         data-testid="job-priority-select"
       >
-        <option value={JobPriority.Regular}>
-          {getJobPriorityLabel(JobPriority.Regular)}
+        <option value="0">
+          {t(`createJobForm.priority.${getJobPriorityLabel(JobPriority.Regular)}`)}
         </option>
-        <option value={JobPriority.High}>
-          {getJobPriorityLabel(JobPriority.High)}
+        <option value="1">
+          {t(`createJobForm.priority.${getJobPriorityLabel(JobPriority.High)}`)}
         </option>
       </Select>
 
@@ -195,7 +126,7 @@ export const CreateJobForm: React.FC<CreateJobFormProps> = ({
           disabled={loading}
           data-testid="cancel-job-btn"
         >
-          Cancel
+          {t('createJobForm.buttons.cancel')}
         </Button>
         <Button 
           type="submit" 
@@ -203,7 +134,7 @@ export const CreateJobForm: React.FC<CreateJobFormProps> = ({
           loading={loading}
           data-testid="create-job-btn"
         >
-          Create Job
+          {t('createJobForm.buttons.create')}
         </Button>
       </FormActions>
     </Form>

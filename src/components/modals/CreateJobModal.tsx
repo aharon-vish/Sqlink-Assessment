@@ -4,6 +4,7 @@ import { CreateJobForm } from '@/components/forms/CreateJobForm';
 import { useUIStore } from '@/stores/uiStore';
 import { useJobStore } from '@/stores/jobStore';
 import { apiService } from '@/services';
+import { useTranslation } from '@/hooks/useTranslation';
 import type { CreateJobFormData } from '@/types';
 
 export const CreateJobModal: React.FC = () => {
@@ -15,6 +16,7 @@ export const CreateJobModal: React.FC = () => {
   } = useUIStore();
   
   const { addJob, setError } = useJobStore();
+  const { t } = useTranslation();
 
   const isLoading = loadingStates['create-job'] || false;
 
@@ -47,7 +49,7 @@ export const CreateJobModal: React.FC = () => {
     <Modal
       isOpen={isCreateJobModalOpen}
       onClose={handleCancel}
-      title="Create New Job"
+      title={t('createJobModal.title')}
       size="md"
     >
       <CreateJobForm

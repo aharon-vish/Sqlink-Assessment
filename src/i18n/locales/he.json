@@ -68,7 +68,7 @@
 
   "statusCards": {
     "pending": "ממתין",
-    "inQueue": "בתור", 
+    "inQueue": "בתור",
     "running": "רץ",
     "completed": "הושלם",
     "failed": "נכשל",
@@ -80,15 +80,7 @@
     "jobNameLabel": "שם המשימה",
     "jobNamePlaceholder": "הכנס שם תיאורי למשימה",
     "priorityLabel": "עדיפות",
-    "createButton": "צור משימה",
-    "validation": {
-      "nameRequired": "שם המשימה נדרש",
-      "nameMinLength": "שם המשימה חייב להכיל לפחות 3 תווים",
-      "nameMaxLength": "שם המשימה חייב להכיל פחות מ-100 תווים",
-      "nameInvalidChars": "שם המשימה יכול להכיל רק אותיות, מספרים, רווחים, מקפים וקו תחתון",
-      "priorityRequired": "אנא בחר עדיפות תקפה",
-      "duplicateName": "משימה עם השם הזה כבר קיימת"
-    }
+    "createButton": "צור משימה"
   },
 
   "deleteJobsModal": {
@@ -126,7 +118,7 @@
   "errors": {
     "failedToLoad": "נכשל לטעון משימות",
     "failedToCreate": "נכשל ליצור משימה",
-    "failedToDelete": "נכשל למחוק משימה", 
+    "failedToDelete": "נכשל למחוק משימה",
     "failedToRestart": "נכשל להפעיל משימה מחדש",
     "failedToStop": "נכשל לעצור משימה",
     "networkError": "שגיאת רשת - אנא בדוק את החיבור שלך",
@@ -140,5 +132,26 @@
     "filterByStatus": "סנן משימות לפי סטטוס {{status}}",
     "jobProgress": "התקדמות המשימה: {{progress}} אחוזים",
     "connectionStatus": "סטטוס החיבור: {{status}}"
+  },
+
+  "createJobForm": {
+    "labels": {
+      "jobName": "שם המשימה",
+      "priority": "עדיפות"
+    },
+    "placeholders": {
+      "jobName": "הכנס שם משימה"
+    },
+    "errors": {
+      "submitFailed": "נכשל ליצור משימה"
+    },
+    "buttons": {
+      "cancel": "בטל",
+      "create": "צור משימה"
+    },
+        "priority":{
+      "regular":"רגיל",
+      "high":"גבוה"
+    }
   }
 }
