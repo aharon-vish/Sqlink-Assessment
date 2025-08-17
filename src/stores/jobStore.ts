@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { Job, JobFilters, JobSorting, StatusCard, JobStore } from '@/types';
+import type { JobFilters, JobSorting, StatusCard, JobStore } from '@/types';
+import type { Job } from '@/types/job';
 import { JobStatus, getJobStatusLabel, getJobStatusColor } from '@/types/enums';
 
 const initialFilters: JobFilters = {
@@ -119,7 +120,7 @@ export const useJobStore = create<JobStore>()(
       // Computed
       getFilteredJobs: () => {
         const { jobs, filters, sorting } = get();
-        let filteredJobs = [...jobs];
+        let filteredJobs = [...(jobs || [])];
 
         // Apply status filter
         if (filters.status !== undefined) {
@@ -140,6 +141,11 @@ export const useJobStore = create<JobStore>()(
         filteredJobs.sort((a, b) => {
           const aValue = a[sorting.column];
           const bValue = b[sorting.column];
+
+          // Handle null values
+          if (aValue === null && bValue === null) return 0;
+          if (aValue === null) return sorting.direction === 'asc' ? 1 : -1;
+          if (bValue === null) return sorting.direction === 'asc' ? -1 : 1;
 
           if (aValue < bValue) {
             return sorting.direction === 'asc' ? -1 : 1;
@@ -168,9 +174,11 @@ export const useJobStore = create<JobStore>()(
           [JobStatus.Stopped]: 0,
         };
 
-        jobs.forEach((job) => {
-          counts[job.status]++;
-        });
+        if (jobs && Array.isArray(jobs)) {
+          jobs.forEach((job) => {
+            counts[job.status]++;
+          });
+        }
 
         return counts;
       },

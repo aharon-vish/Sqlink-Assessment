@@ -29,7 +29,9 @@ const Label = styled.label<{ required?: boolean }>`
   `}
 `;
 
-const StyledInput = styled.input<{ hasError?: boolean }>`
+const StyledInput = styled.input.withConfig({
+  shouldForwardProp: (prop) => prop !== 'hasError'
+})<{ hasError?: boolean }>`
   width: 100%;
   padding: 8px 12px;
   border: 2px solid ${({ hasError }) => hasError ? '#e53e3e' : '#e2e8f0'};
@@ -38,6 +40,7 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
   background-color: white;
   transition: border-color 0.2s ease-in-out;
   color: black;
+  
   &:focus {
     outline: none;
     border-color: ${({ hasError }) => hasError ? '#e53e3e' : '#3182ce'};
@@ -49,7 +52,9 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
   }
 `;
 
-const StyledSelect = styled.select<{ hasError?: boolean }>`
+const StyledSelect = styled.select.withConfig({
+  shouldForwardProp: (prop) => prop !== 'hasError'
+})<{ hasError?: boolean }>`
   width: 100%;
   padding: 8px 12px;
   border: 2px solid ${({ hasError }) => hasError ? '#e53e3e' : '#e2e8f0'};

@@ -165,7 +165,8 @@ export const CreateJobForm: React.FC<CreateJobFormProps> = ({
         onBlur={() => handleFieldBlur('name')}
         error={touched.name ? errors.name : undefined}
         required
-        data-testid="job-name-input"
+        disabled={loading}
+        data-testid="modal-submit-create-job"
       />
       
       <Select
@@ -175,6 +176,7 @@ export const CreateJobForm: React.FC<CreateJobFormProps> = ({
         onBlur={() => handleFieldBlur('priority')}
         error={touched.priority ? errors.priority : undefined}
         required
+        disabled={loading}
         data-testid="job-priority-select"
       >
         <option value={JobPriority.Regular}>

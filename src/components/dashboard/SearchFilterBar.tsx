@@ -4,6 +4,7 @@ import { Input, Button } from '@/components/ui';
 import { useJobStore } from '@/stores/jobStore';
 import { getJobStatusLabel } from '@/types/enums';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useDebounce } from '@/hooks/usePerformance';
 
 const FilterBarContainer = styled.div`
   display: flex;
@@ -50,25 +51,6 @@ const ActiveFilter = styled.span`
 const ClearButton = styled(Button)`
   min-width: fit-content;
 `;
-
-// Debounce hook
-const useDebounce = (callback: (value: string) => void, delay: number) => {
-  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout>();
-
-  const debouncedCallback = useCallback((value: string) => {
-    if (debounceTimer) {
-      clearTimeout(debounceTimer);
-    }
-
-    const newTimer = setTimeout(() => {
-      callback(value);
-    }, delay);
-
-    setDebounceTimer(newTimer);
-  }, [callback, delay, debounceTimer]);
-
-  return debouncedCallback;
-};
 
 export const SearchFilterBar: React.FC = () => {
   const { t } = useTranslation();
@@ -117,7 +99,7 @@ export const SearchFilterBar: React.FC = () => {
         <span>
           {t('dashboard.showingResults', { 
             count: filteredJobs.length, 
-            total: jobs.length 
+            total: jobs?.length || 0 
           })}
         </span>
         

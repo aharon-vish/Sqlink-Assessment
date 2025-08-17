@@ -13,7 +13,9 @@ const HeaderRow = styled.tr`
   color: white;
 `;
 
-const HeaderCell = styled.th<{ sortable?: boolean; active?: boolean }>`
+const HeaderCell = styled.th.withConfig({
+  shouldForwardProp: (prop) => prop !== 'sortable' && prop !== 'active'
+})<{ sortable?: boolean; active?: boolean }>`
   padding: 16px 12px;
   text-align: left;
   font-weight: 600;

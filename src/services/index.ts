@@ -1,5 +1,5 @@
 import type { JobAPI, JobSignalRHub } from '@/types';
-import { enhancedMockApiService } from './enhancedMockApiService';
+import { mockApiService } from './mockApiService';
 import { mockSignalRService } from './mockSignalRService';
 import { isMockMode } from './serviceConfig';
 
@@ -56,12 +56,11 @@ class RealApiService implements JobAPI {
 
 // Service instances
 export const apiService: JobAPI = isMockMode() 
-  ? enhancedMockApiService 
+  ? mockApiService 
   : new RealApiService();
 
-export const signalRService: JobSignalRHub = isMockMode()
-  ? mockSignalRService
-  : mockSignalRService; // Use mock for now, replace with real implementation later
+export const signalRService: JobSignalRHub = mockSignalRService;
 
-export { enhancedMockApiService as mockApiService, mockSignalRService };
+// Export individual services for testing
+export { mockApiService, mockSignalRService };
 export * from './serviceConfig';

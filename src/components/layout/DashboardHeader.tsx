@@ -51,14 +51,14 @@ export const DashboardHeader: React.FC = () => {
           <Button 
             variant="primary" 
             onClick={openCreateJobModal}
-            data-testid="create-job-btn"
+            data-testid="header-create-job-btn"
           >
             {t('dashboard.createNewJob')}
           </Button>
           <Button 
             variant="danger" 
             onClick={openDeleteJobsModal}
-            data-testid="delete-jobs-btn"
+            data-testid="header-delete-jobs-btn"
           >
             {t('dashboard.deleteJobs')}
           </Button>

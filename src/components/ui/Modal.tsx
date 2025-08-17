@@ -23,15 +23,21 @@ const ModalContent = styled.div<{ size: 'sm' | 'md' | 'lg' }>`
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  
+
   ${({ size }) => {
     switch (size) {
       case 'sm':
-        return css`max-width: 400px;`;
+        return css`
+          max-width: 400px;
+        `;
       case 'md':
-        return css`max-width: 500px;`;
+        return css`
+          max-width: 500px;
+        `;
       case 'lg':
-        return css`max-width: 800px;`;
+        return css`
+          max-width: 800px;
+        `;
     }
   }}
 `;
@@ -63,7 +69,7 @@ const CloseButton = styled.button`
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  
+
   &:hover {
     background-color: #f7fafc;
     color: #2d3748;
@@ -79,7 +85,7 @@ export const Modal: React.FC<ModalProps> = ({
   onClose,
   title,
   children,
-  size = 'md'
+  size = 'md',
 }) => {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -103,7 +109,14 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <Overlay onClick={onClose}>
-      <ModalContent size={size} onClick={(e) => e.stopPropagation()}>
+      <ModalContent
+        size={size}
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        data-testid="create-job-modal"
+      >
         <ModalHeader>
           <ModalTitle>{title}</ModalTitle>
           <CloseButton onClick={onClose}>×</CloseButton>

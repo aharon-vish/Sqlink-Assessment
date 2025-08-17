@@ -54,6 +54,10 @@ export interface JobStore {
   getJobsByStatus: (status: JobStatus) => Job[];
   /** Get count of jobs for each status */
   getJobCounts: () => Record<JobStatus, number>;
+  
+  // Internal helpers
+  /** Update the status cards based on current job counts */
+  updateStatusCards: () => void;
 }
 
 /**

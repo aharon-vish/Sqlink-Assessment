@@ -8,7 +8,9 @@ const SelectorContainer = styled.div`
   display: inline-block;
 `;
 
-const LanguageButton = styled.button<{ isRTL: boolean }>`
+const LanguageButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isRTL'
+})<{ isRTL: boolean }>`
   display: flex;
   align-items: center;
   gap: 8px;
@@ -43,14 +45,18 @@ const LanguageText = styled.span`
   color: #2d3748;
 `;
 
-const ChevronIcon = styled.span<{ isRTL: boolean }>`
+const ChevronIcon = styled.span.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isRTL'
+})<{ isRTL: boolean }>`
   transform: ${({ isRTL }) => isRTL ? 'rotate(90deg)' : 'rotate(-90deg)'};
   transition: transform 0.2s ease-in-out;
   font-size: 12px;
   color: #718096;
 `;
 
-const Dropdown = styled.div<{ isOpen: boolean; isRTL: boolean }>`
+const Dropdown = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isOpen' && prop !== 'isRTL'
+})<{ isOpen: boolean; isRTL: boolean }>`
   position: absolute;
   top: 100%;
   ${({ isRTL }) => isRTL ? 'left: 0;' : 'right: 0;'}
@@ -67,7 +73,9 @@ const Dropdown = styled.div<{ isOpen: boolean; isRTL: boolean }>`
   transition: all 0.2s ease-in-out;
 `;
 
-const LanguageOption = styled.button<{ isActive: boolean; isRTL: boolean }>`
+const LanguageOption = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isActive' && prop !== 'isRTL'
+})<{ isActive: boolean; isRTL: boolean }>`
   display: flex;
   align-items: center;
   gap: 8px;

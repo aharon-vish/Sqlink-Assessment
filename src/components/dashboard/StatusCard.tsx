@@ -4,7 +4,9 @@ import type { StatusCardProps } from '@/types';
 import { getJobStatusLabel, getJobStatusColor } from '@/types/enums';
 import { useTranslation } from '@/hooks/useTranslation';
 
-const CardContainer = styled.div<{ color: string; isActive: boolean }>`
+const CardContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isActive' && prop !== 'color'
+})<{ color: string; isActive: boolean }>`
   background: white;
   border-radius: 12px;
   padding: 28px 24px;
