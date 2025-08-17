@@ -25,7 +25,8 @@ const generateMockJob = (
 
 // Generate initial mock data
 const generateInitialJobs = (): Job[] => {
-  return [
+  const now = Date.now();
+  const jobs = [
     generateMockJob('Data Processing Job', JobPriority.High, JobStatus.Completed),
     generateMockJob('Email Campaign', JobPriority.Regular, JobStatus.Running),
     generateMockJob('Database Backup', JobPriority.High, JobStatus.Running),
@@ -35,6 +36,13 @@ const generateInitialJobs = (): Job[] => {
     generateMockJob('Analytics Export', JobPriority.High, JobStatus.Stopped),
     generateMockJob('User Sync', JobPriority.Regular, JobStatus.Completed),
   ];
+
+  // Set different createdAt timestamps for each job (spaced 1-6 hours apart)
+  jobs.forEach((job, index) => {
+    job.createdAt = now - (index * 60 * 60 * 1000) - Math.floor(Math.random() * 3600000);
+  });
+
+  return jobs;
 };
 
 class MockApiService implements JobAPI {
