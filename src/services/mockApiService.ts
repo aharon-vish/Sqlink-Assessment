@@ -49,6 +49,43 @@ class MockApiService implements JobAPI {
   private jobs: Job[] = generateInitialJobs();
   private delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+  constructor() {
+    // Start progress simulation for any running jobs
+    this.initializeRunningJobs();
+  }
+
+  private initializeRunningJobs(): void {
+    // Find any jobs that are already running and start their progress simulation
+    this.jobs.forEach(job => {
+      if (job.status === JobStatus.Running) {
+        this.simulateProgress(job.jobID);
+      } else if (job.status === JobStatus.InQueue) {
+        // For InQueue jobs, start the lifecycle from the running phase
+        setTimeout(() => {
+          const currentJob = this.jobs.find(j => j.jobID === job.jobID);
+          if (currentJob && currentJob.status === JobStatus.InQueue) {
+            currentJob.status = JobStatus.Running;
+            currentJob.startedAt = Date.now();
+            
+            // Emit SignalR event
+            if (typeof window !== 'undefined' && (window as any).mockSignalRService) {
+              (window as any).mockSignalRService.emitProgressUpdate({
+                jobID: job.jobID,
+                status: currentJob.status,
+                progress: currentJob.progress,
+              });
+            }
+            
+            this.simulateProgress(job.jobID);
+          }
+        }, Math.random() * 3000 + 2000); // 2-5 seconds
+      } else if (job.status === JobStatus.Pending) {
+        // For Pending jobs, start the full lifecycle
+        this.simulateJobLifecycle(job.jobID);
+      }
+    });
+  }
+
   async getAllJobs(): Promise<Job[]> {
     await this.delay(500); // Simulate network delay
     return [...this.jobs];
@@ -250,9 +287,9 @@ class MockApiService implements JobAPI {
               });
             }
           }
-        }, 500);
+        }, 1000);
       }
-    }, 1000); // Update every 1.5 seconds
+    }, 1500); // Update every 1.5 seconds
   }
 }
 
